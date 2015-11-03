@@ -10,7 +10,7 @@ import systems.jobs.threads.ThreadPool;
  * @author Ilya
  *
  */
-public class Launcher {
+public class Launcher implements Runnable{
 
 	private static String KEY_CORE_COUNT = "NUMBER_OF_PROCESSORS";
 
@@ -25,13 +25,19 @@ public class Launcher {
 	static {
 		coreCount = Integer.parseInt(System.getenv().get(KEY_CORE_COUNT).toString());
 		maxTaskCount = 999;
-		ThreadPool.intialiseThreadPool(coreCount - 1, maxTaskCount);
 	}
 
 	public static void main(String[] args) {
+	    ThreadPool.intialiseThreadPool(coreCount, maxTaskCount);
 		
 		System.out.println("Starting main thread...");
 		ThreadPool.addTask(new TestTask());
 	}
+
+    @Override
+    public void run() {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

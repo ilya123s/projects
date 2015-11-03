@@ -39,7 +39,7 @@ public class ThreadPool {
 		taskQueue = new LinkedList<Task>();
 		ThreadPool.maxTaskCount = maxTaskCount;
 
-		for (int i = 0; i < coreCount; i++) {
+		for (int i = 0; i < coreCount -1; i++) {
 			RunnableThread newRunnableThread = new RunnableThread(i, taskQueue);
 			Thread thread = new Thread(newRunnableThread);
 			thread.setDaemon(true);
@@ -47,6 +47,7 @@ public class ThreadPool {
 		}
 		this.startAllThreads();
 		hasStartedAllThreads = true;
+		threadList.add(Thread.currentThread());
 
 	}
 

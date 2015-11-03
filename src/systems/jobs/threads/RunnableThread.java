@@ -1,6 +1,5 @@
 package systems.jobs.threads;
 
-import java.util.Currency;
 import java.util.Queue;
 
 import systems.jobs.tasks.Task;
@@ -27,12 +26,6 @@ public class RunnableThread implements Runnable {
 			if (!taskQueue.isEmpty()) {
 				taskQueue.poll().execute();
 				System.out.println(threadNumber + " EXECUTING");
-			}
-			try {
-				Thread.sleep(50);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
 			}
 		}
 	}
