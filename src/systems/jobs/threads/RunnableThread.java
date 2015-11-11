@@ -6,27 +6,24 @@ import systems.jobs.tasks.Task;
 
 public class RunnableThread implements Runnable {
 
-	private int threadNumber;
+    private boolean isAwake;
 
-	private boolean isAwake;
+    private volatile Queue<Task> taskQueue;
 
-	private volatile Queue<Task> taskQueue;
+    public RunnableThread(Queue<Task> taskQueue) {
+        this.taskQueue = taskQueue;
+    }
 
-	public RunnableThread(int threadNumber, Queue<Task> taskQueue) {
-		this.threadNumber = threadNumber;
-		this.taskQueue = taskQueue;
-	}
-
-	@Override
-	public void run() {
-
-		System.out.println(threadNumber);
-		while (true) {
-			System.out.println(threadNumber);
-			if (!taskQueue.isEmpty()) {
-				taskQueue.poll().execute();
-				System.out.println(threadNumber + " EXECUTING");
-			}
-		}
-	}
+    @Override
+    public void run() {
+        String threadName = Thread.currentThread().getName();
+        System.out.println(threadName + " Initialised");
+        while (true) {
+            System.out.println(threadName);
+            if (!taskQueue.isEmpty()) {
+                taskQueue.poll().execute();
+                System.out.println(threadName + " EXECUTING");
+            }
+        }
+    }
 }

@@ -10,34 +10,42 @@ import systems.jobs.threads.ThreadPool;
  * @author Ilya
  *
  */
-public class Launcher implements Runnable{
+public class Launcher {
 
-	private static String KEY_CORE_COUNT = "NUMBER_OF_PROCESSORS";
+    private static String KEY_CORE_COUNT = "NUMBER_OF_PROCESSORS";
 
-	private static int coreCount;
-	private static int maxTaskCount;
+    private static int coreCount;
 
-	/**
-	 * Initialise the thread pool with the system core count and the max task
-	 * count (this is an arbitrary value). Do this before running main as these
-	 * are required on set up.
-	 */
-	static {
-		coreCount = Integer.parseInt(System.getenv().get(KEY_CORE_COUNT).toString());
-		maxTaskCount = 999;
-	}
+    private static int maxTaskCount;
 
-	public static void main(String[] args) {
-	    ThreadPool.intialiseThreadPool(coreCount, maxTaskCount);
-		
-		System.out.println("Starting main thread...");
-		ThreadPool.addTask(new TestTask());
-	}
+    /**
+     * Initialise the thread pool with the system core count and the max task
+     * count (this is an arbitrary value). Do this before running main as these
+     * are required on set up.
+     */
+    static {
+        coreCount = Integer.parseInt(System.getenv().get(KEY_CORE_COUNT).toString());
+        maxTaskCount = 999;
+    }
 
-    @Override
-    public void run() {
-        // TODO Auto-generated method stub
-        
+    public static void main(String[] args) {
+        ThreadPool.intialiseThreadPool(coreCount, maxTaskCount);
+
+        System.out.println("Starting main thread...");
+        ThreadPool.addTask(new TestTask());
+
+        System.out.println("Thread Count " + ThreadPool.getThreadCount());
+        run();
+    }
+
+    public static void run() {
+
+        String threadName = Thread.currentThread().getName();
+        System.out.println(threadName + " Main thread runnable Initialised");
+        while (true) {
+            System.out.println( threadName + " just chillin...");
+        }
+
     }
 
 }

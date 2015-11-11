@@ -18,75 +18,87 @@ import systems.jobs.tasks.Task;
  */
 public class ThreadPool {
 
-	private static List<Thread> threadList;
+    private static List<Thread> threadList;
 
-	private static int maxTaskCount;
+    private static int maxTaskCount;
 
-	private volatile static Queue<Task> taskQueue;
+    private volatile static Queue<Task> taskQueue;
 
-	private static ThreadPool threadPool;
+    private static ThreadPool threadPool;
 
-	private boolean hasStartedAllThreads;
+    public static void intialiseThreadPool(int coreCount, int maxTaskCount) {
+        if (null == threadPool) {
+            threadPool = new ThreadPool(coreCount, maxTaskCount);
+        }
 
-	public static void intialiseThreadPool(int coreCount, int maxTaskCount) {
-		if (null == threadPool) {
-			threadPool = new ThreadPool(coreCount, maxTaskCount);
-		}
-	}
+    }
 
-	private ThreadPool(int coreCount, int maxTaskCount) {
-		threadList = new ArrayList<Thread>();
-		taskQueue = new LinkedList<Task>();
-		ThreadPool.maxTaskCount = maxTaskCount;
+    private ThreadPool(int coreCount, int maxTaskCount) {
+        threadList = new ArrayList<Thread>();
+        taskQueue = new LinkedList<Task>();
+        ThreadPool.maxTaskCount = maxTaskCount;
 
-		for (int i = 0; i < coreCount -1; i++) {
-			RunnableThread newRunnableThread = new RunnableThread(i, taskQueue);
-			Thread thread = new Thread(newRunnableThread);
-			thread.setDaemon(true);
-			threadList.add(thread);
-		}
-		this.startAllThreads();
-		hasStartedAllThreads = true;
-		threadList.add(Thread.currentThread());
+        for (int i = 0; i < coreCount - 1; i++) {
+            RunnableThread newRunnableThread = new RunnableThread(taskQueue);
+            Thread thread = new Thread(newRunnableThread);
+            thread.setName(new String("Thread number " + i));
+            thread.setDaemon(true);
+            threadList.add(thread);
+        }
+        this.startAllThreads();
+        Thread.currentThread().setName("Thread number " + (coreCount - 1));
+        threadList.add(Thread.currentThread());
 
-	}
+    }
 
-	/**
-	 * This starts all the threads and will and can only be called once.
-	 */
-	private void startAllThreads() {
-		if (!hasStartedAllThreads) {
-			for (Thread thread : threadList) {
-				thread.start();
-			}
-		}
+    /**
+     * This starts all the threads and will and will check if the thread has
+     * already been started. If it hasn't then it will be stored, otherwise does
+     * nothing.
+     */
+    private void startAllThreads() {
+        for (Thread thread : threadList) {
+            if (!thread.isAlive()) {
+                thread.start();
+            }
+        }
 
-	}
+    }
 
-	/**
-	 * Method will call run on all threads regardless of their state.
-	 */
-	public static void kickAll() {
-		threadList.notifyAll();
-	}
+    /**
+     * Method will call run on all threads regardless of their state.
+     */
+    public static void kickAll() {
+        threadList.notifyAll();
+    }
 
-	/**
-	 * Method will set all threads to sleep regardless of state.
-	 * 
-	 * @throws InterruptedException
-	 */
-	public static void waitAll() throws InterruptedException {
-		for (Thread thread : threadList) {
-			thread.wait();
-		}
-	}
+    /**
+     * Method will set all threads to sleep regardless of state.
+     * 
+     * @throws InterruptedException
+     */
+    public static void waitAll() throws InterruptedException {
+        for (Thread thread : threadList) {
+            thread.wait();
+        }
+    }
 
-	public static synchronized void addTask(Task task) {
+    public static synchronized void addTask(Task task) {
 
-		if (taskQueue.size() < maxTaskCount) {
-			taskQueue.add(task);
-			System.out.println("TASK ADDED");
-		}
-	}
+        System.out.println("Queue size " + taskQueue.size());
+        if (taskQueue.size() < maxTaskCount) {
+            taskQueue.add(task);
+            System.out.println("TASK ADDED");
+        }
+    }
+
+    /**
+     * Returns the number of active threads.
+     * 
+     * @return int
+     */
+    public static int getThreadCount() {
+        return threadList.size();
+    }
 
 }
