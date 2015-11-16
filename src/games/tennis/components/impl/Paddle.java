@@ -1,7 +1,7 @@
 package games.tennis.components.impl;
 
+import games.tennis.GameController;
 import games.tennis.components.TennisComponent;
-import games.tennis.flow.GameController;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -18,8 +18,6 @@ public class Paddle implements KeyListener, TennisComponent {
     private int paddleWidth;
 
     private int paddleHeight;
-
-    private boolean needsToBeUpdated;
 
     private GameController gameController;
 
@@ -42,14 +40,13 @@ public class Paddle implements KeyListener, TennisComponent {
             xMovement = -1;
         if (e.getKeyCode() == KeyEvent.VK_RIGHT)
             xMovement = 1;
-
-        needsToBeUpdated = true;
+        movePaddle();
     }
 
     @Override
     public void keyReleased(KeyEvent arg0) {
         xMovement = 0;
-        needsToBeUpdated = true;
+        movePaddle();
     }
 
     @Override
@@ -75,13 +72,7 @@ public class Paddle implements KeyListener, TennisComponent {
 
     @Override
     public void update() {
-        movePaddle();
-        needsToBeUpdated = false;
-    }
-
-    @Override
-    public boolean needsToBeUpdate() {
-        return needsToBeUpdated;
+        //This method does nothing, as paddle is updated when key is pressed, not when update is called
     }
 
 }

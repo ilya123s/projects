@@ -1,7 +1,7 @@
 package games.tennis.components.impl;
 
+import games.tennis.GameController;
 import games.tennis.components.TennisComponent;
-import games.tennis.flow.GameController;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -23,8 +23,6 @@ public class Ball implements TennisComponent {
 
     private Paddle paddle;
 
-    private boolean needsToBeUpdated;
-
     public Ball(int ballDiameter, int movementSpeed, GameController gameController) {
         // initialise ball position in top right
         x = 0;
@@ -34,7 +32,6 @@ public class Ball implements TennisComponent {
         this.gameController = gameController;
         this.ballDiameter = ballDiameter;
         this.paddle = gameController.getPaddle();
-        needsToBeUpdated = true;
     }
 
     private void moveBall() {
@@ -75,16 +72,7 @@ public class Ball implements TennisComponent {
     @Override
     public void update() {
         moveBall();
-        //needsToBeUpdated = false;
     }
 
-    @Override
-    public boolean needsToBeUpdate() {
-        return needsToBeUpdated;
-    }
-
-    public void setUpdate(boolean toUpdate) {
-        this.needsToBeUpdated = toUpdate;
-    }
 
 }

@@ -1,13 +1,13 @@
-package games.tennis.flow;
+package games.tennis;
 
 import games.tennis.components.TennisComponent;
 import games.tennis.components.impl.Ball;
 import games.tennis.components.impl.Paddle;
+import games.tennis.jobs.tasks.TaskFactory;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.util.LinkedList;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -20,15 +20,20 @@ public class GameController extends JPanel {
 
     private Paddle paddle;
 
-    private LinkedList<TennisComponent> componentList;
+    private volatile LinkedList<TennisComponent> componentList;
+    
+    private Graphics graphics;
 
-    public GameController() {
+    public GameController(Graphics graphics) {
         this.paddle = new Paddle(60, 10, this);
         this.ball = new Ball(30, 1, this);
         this.setBackground(Color.WHITE);
-        componentList = new LinkedList();
+        this.graphics = graphics;
+        componentList = new LinkedList<TennisComponent>();
         componentList.add(paddle);
         componentList.add(ball);
+
+        TaskFactory.intialiseFactory(componentList, graphics);
     }
 
     public Ball getBall() {
@@ -45,19 +50,12 @@ public class GameController extends JPanel {
      * @throws InterruptedException
      */
     public void runGameFlow() throws InterruptedException {
-        ExecutorService executor = Executors.newFixedThreadPool(2);
-        Updater updater = new Updater(componentList);
-        Render render = new Render(componentList, getGraphics());
-        //setBallTimer(5);
-        executor.execute(updater);
-        executor.execute(render);
+        while (true) {
+            TaskFactory.createRenderTask();
+            TaskFactory.createUpdateBallPositionTask();
+        }
 
     }
-
-    //    private void setBallTimer(long speed) throws InterruptedException {
-    //        ball.setUpdate(true);
-    //        Thread.sleep(speed);
-    //    }
 
     public void gameOver() {
         JOptionPane.showMessageDialog(this, "Game Over", "Game Over", JOptionPane.YES_NO_OPTION);

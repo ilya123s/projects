@@ -17,7 +17,7 @@ public class Launcher {
     private static int coreCount;
 
     private static int maxTaskCount;
-
+    
     /**
      * Initialise the thread pool with the system core count and the max task
      * count (this is an arbitrary value). Do this before running main as these
@@ -39,7 +39,6 @@ public class Launcher {
     }
 
     public static void run() {
-
         String threadName = Thread.currentThread().getName();
         System.out.println(threadName + " Main thread runnable Initialised");
         while (true) {
